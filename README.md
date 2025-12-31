@@ -1,6 +1,6 @@
 # ScrapeGraphAI を使用した LLM ベースの Webスクレイピング
 
-[![Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.jp/)
+[![Promo](https://github.com/bright-jp/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.jp/)
 
 このガイドでは、ScrapeGraphAI と大規模言語モデル（LLM）を使用して Webスクレイピングを簡素化し、データ抽出を自動化する方法を説明します。
 
@@ -74,7 +74,7 @@ OPENAI_API_KEY="your-openai-api-key"
 
 まず、Webスクレイピング手法の練習用に特化したデモサイトである [Books to Scrape](http://books.toscrape.com/) から商品データをスクレイピングします。この Webサイトはオンライン書店を模しており、価格、評価、在庫状況を含むさまざまなジャンルの書籍を提供しています。
 
-![Books to Scrape website](https://github.com/luminati-io/web-scraping-with-scrapegraphai/blob/main/images/Books-to-Scrape-website-1024x772.png)
+![Books to Scrape website](https://github.com/bright-jp/web-scraping-with-scrapegraphai/blob/main/images/Books-to-Scrape-website-1024x772.png)
 
 従来の HTML スクレイピングでは、データを抽出するために要素を手動で調査します。ScrapeGraphAI では、プロンプトで必要なデータを指定するだけで、LLM が抽出してくれます。
 
