@@ -1,97 +1,97 @@
-# LLM-based Web Scraping with ScrapeGraphAI
+# ScrapeGraphAI を使用した LLM ベースの Webスクレイピング
 
-[![Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.com/)
+[![Promo](https://github.com/luminati-io/LinkedIn-Scraper/raw/main/Proxies%20and%20scrapers%20GitHub%20bonus%20banner.png)](https://brightdata.jp/)
 
-This guide explains how to use ScrapeGraphAI and large language models to simplify web scraping and automate data extraction.
+このガイドでは、ScrapeGraphAI と大規模言語モデル（LLM）を使用して Webスクレイピングを簡素化し、データ抽出を自動化する方法を説明します。
 
-- [Why use ScrapeGraphAI?](#why-use-scrapegraphai)
-- [Prerequisites](#prerequisites)
-- [Setting Up Your Environment](#setting-up-your-environment)
-- [Scraping Data with ScrapeGraphAI](#scraping-data-with-scrapegraphai)
-  - [Writing the Scraper Code](#writing-the-scraper-code)
-  - [Using Proxies with ScrapeGraphAI](#using-proxies-with-scrapegraphai)
-- [Cleaning and Preparing Data](#cleaning-and-preparing-data)
+- [なぜ ScrapeGraphAI を使用するのか？](#why-use-scrapegraphai)
+- [前提条件](#prerequisites)
+- [環境のセットアップ](#setting-up-your-environment)
+- [ScrapeGraphAI でデータをスクレイピングする](#scraping-data-with-scrapegraphai)
+  - [スクレイパーコードの作成](#writing-the-scraper-code)
+  - [ScrapeGraphAI でプロキシを使用する](#using-proxies-with-scrapegraphai)
+- [データのクリーニングと前処理](#cleaning-and-preparing-data)
 
 ## Why use ScrapeGraphAI?
 
-Traditional web scraping requires writing complex, time-consuming code specific to each website layout, which often breaks when sites change.
+従来の Webスクレイピングでは、各 Webサイトのレイアウトに固有の複雑で時間のかかるコードを書く必要があり、サイト変更があると壊れてしまうことがよくあります。
 
-[ScrapeGraphAI](https://scrapegraphai.com/) leverages large language models (LLMs) to interpret and extract data like a human, allowing you to focus on the data rather than the layout. By integrating LLMs, ScrapeGraphAI improves data extraction, automates content aggregation, and enables real-time analysis.
+[ScrapeGraphAI](https://scrapegraphai.com/) は大規模言語モデル（LLM）を活用して、人間のようにデータを解釈・抽出できるため、レイアウトではなくデータそのものに集中できます。LLM を統合することで、ScrapeGraphAI はデータ抽出を改善し、コンテンツ集約を自動化し、リアルタイム分析を可能にします。
 
 ## Prerequisites
 
-You need the following prerequisites:
+以下の前提条件が必要です。
 
-* [Python 3.x](https://www.python.org/downloads/).
-* [An OpenAI account](https://platform.openai.com/signup) to access [GPT-4](https://openai.com/index/gpt-4/).
+* [Python 3.x](https://www.python.org/downloads/)。
+* [GPT-4](https://openai.com/index/gpt-4/) にアクセスするための [OpenAI アカウント](https://platform.openai.com/signup)。
 
 ## Setting Up Your Environment
 
-Create a virtual environment:
+仮想環境を作成します。
 
 ```bash
 python -m venv venv
 ```
 
-Then, activate the virtual environment. On macOS and Linux:
+次に、仮想環境を有効化します。macOS と Linux の場合：
 
 ```bash
 source venv/bin/activate
 ```
 
-On Windows, you can use this command:
+Windows の場合は、このコマンドを使用できます：
 
 ```powershell
 venv\Scripts\activate
 ```
 
-Install ScrapeGraphAI and its dependencies:
+ScrapeGraphAI と依存関係をインストールします。
 
 ```bash
 pip install scrapegraphai
 playwright install
 ```
 
-The `playwright install` command sets up the necessary browsers for Chromium, Firefox, and WebKit.
+`playwright install` コマンドは、Chromium、Firefox、WebKit に必要なブラウザをセットアップします。
 
-To manage environment variables securely, install `python-dotenv`:
+環境変数を安全に管理するために、`python-dotenv` をインストールします。
 
 ```bash
 pip install python-dotenv
 ```
 
-It’s important to protect sensitive information, like API keys. To do that, store environment variables in a `.env` file to keep it separate from the code files.
+API キーなどの機密情報は保護することが重要です。そのため、環境変数は `.env` ファイルに保存し、コードファイルとは分離してください。
 
-Create a new file named `.env` in the project directory and add the following line specifying your OpenAI key:
+プロジェクトディレクトリに `.env` という名前の新しいファイルを作成し、OpenAI key を指定する次の行を追加します。
 
 ```python
 OPENAI_API_KEY="your-openai-api-key"
 ```
 
-This file should not be committed to version control systems like Git. To prevent this, add `.env` to your `.gitignore` file.
+このファイルは Git などのバージョン管理システムにコミットしないでください。これを防ぐために、`.gitignore` ファイルに `.env` を追加します。
 
 ## Scraping Data with ScrapeGraphAI
 
-Start by scraping product data from [Books to Scrape](http://books.toscrape.com/), a demo website specifically for practicing web scraping techniques. This website mimics an online bookstore, offering a variety of books across different genres, complete with prices, ratings, and availability status:
+まず、Webスクレイピング手法の練習用に特化したデモサイトである [Books to Scrape](http://books.toscrape.com/) から商品データをスクレイピングします。この Webサイトはオンライン書店を模しており、価格、評価、在庫状況を含むさまざまなジャンルの書籍を提供しています。
 
 ![Books to Scrape website](https://github.com/luminati-io/web-scraping-with-scrapegraphai/blob/main/images/Books-to-Scrape-website-1024x772.png)
 
-In traditional HTML scraping, you manually inspect elements to extract data. With ScrapeGraphAI, simply specify your desired data using a prompt, and the LLM extracts it for you.
+従来の HTML スクレイピングでは、データを抽出するために要素を手動で調査します。ScrapeGraphAI では、プロンプトで必要なデータを指定するだけで、LLM が抽出してくれます。
 
-ScrapeGraphAI offers various graphs for different scraping needs:
+ScrapeGraphAI は、さまざまなスクレイピング要件に対応する複数の graph を提供しています。
 
-* **[SmartScraperGraph](https://scrapegraph-ai.readthedocs.io/en/latest/scrapers/types.html#smartscrapermultigraph)**: Single-page scraper using a prompt and URL or local file.
-* **[SearchGraph](https://scrapegraph-ai.readthedocs.io/en/latest/scrapers/types.html#searchgraph)**: Multi-page scraper extracting data from search engine results.
-* **[SpeechGraph](https://scrapegraph-ai.readthedocs.io/en/latest/scrapers/types.html#speechgraph)**: Extends SmartScraperGraph with text-to-speech, generating an audio file.
-* **[ScriptCreatorGraph](https://scrapegraph-ai.readthedocs.io/en/latest/scrapers/types.html#scriptcreatorgraph-scriptcreatormultigraph)**: Outputs a Python script for scraping the specified URL.
+* **[SmartScraperGraph](https://scrapegraph-ai.readthedocs.io/en/latest/scrapers/types.html#smartscrapermultigraph)**: プロンプトと URL、またはローカルファイルを使用する単一ページのスクレイパーです。
+* **[SearchGraph](https://scrapegraph-ai.readthedocs.io/en/latest/scrapers/types.html#searchgraph)**: 検索エンジンの結果からデータを抽出する複数ページのスクレイパーです。
+* **[SpeechGraph](https://scrapegraph-ai.readthedocs.io/en/latest/scrapers/types.html#speechgraph)**: text-to-speech を追加して SmartScraperGraph を拡張し、音声ファイルを生成します。
+* **[ScriptCreatorGraph](https://scrapegraph-ai.readthedocs.io/en/latest/scrapers/types.html#scriptcreatorgraph-scriptcreatormultigraph)**: 指定した URL をスクレイピングする Python スクリプトを出力します。
 
-You can also create custom graphs by combining nodes to fit specific needs.
+また、ノードを組み合わせてニーズに合うカスタム graph を作成することもできます。
 
-To ensure accurate scraping, configure the scraper properly, including a clear prompt, model selection, proxies for georestricted content, and headless mode for efficiency. Proper setup influences the precision of your extracted data.
+正確なスクレイピングを行うために、明確なプロンプト、モデル選択、ジオロケーション制限コンテンツ向けのプロキシ、効率のための headless モードなど、スクレイパーを適切に設定してください。適切なセットアップは、抽出データの精度に影響します。
 
 ### Writing the Scraper Code
 
-Create a new file named `app.py` and insert the following code:
+`app.py` という名前の新しいファイルを作成し、次のコードを挿入します。
 
 ```python
 from dotenv import load_dotenv
@@ -130,9 +130,9 @@ result = smart_scraper_graph.run()
 print(result)
 ```
 
-This code imports essential modules like `os` and `dotenv` for managing environment variables, and the `SmartScraperGraph` class from ScrapeGraphAI for scraping. It loads environment variables via `dotenv` to keep sensitive data (e.g., API keys) secure. The code then configures an LLM for scraping, specifying the model and API key. This configuration, along with the site URL and scraping prompt, defines the `SmartScraperGraph`, which is executed using the `run()` method to gather the specified data.
+このコードは、環境変数管理用の `os` や `dotenv`、およびスクレイピング用の ScrapeGraphAI の `SmartScraperGraph` クラスなど、必須モジュールをインポートします。`dotenv` を介して環境変数を読み込み、機密データ（例：API キー）を安全に保ちます。次に、モデルと API key を指定してスクレイピング用の LLM を設定します。この設定に加え、サイト URL とスクレイピングプロンプトで `SmartScraperGraph` を定義し、`run()` メソッドで実行して指定データを収集します。
 
-To run the code, use the command `python app.py` in your terminal. The output will look like this:
+コードを実行するには、ターミナルで `python app.py` コマンドを使用します。出力は次のようになります。
 
 ```
 {
@@ -153,19 +153,19 @@ To run the code, use the command `python app.py` in your terminal. The output wi
 
 > **Note**:
 > 
-> Make sure you have [`grpcio`](https://pypi.org/project/grpcio/) package installed to avoid potential errors.
+> 潜在的なエラーを回避するために、[`grpcio`](https://pypi.org/project/grpcio/) パッケージがインストールされていることを確認してください。
 
-While ScrapeGraphAI makes the data extraction part of web scraping easy, there are still some common challenges, like CAPTCHAs and IP blocks.
+ScrapeGraphAI は Webスクレイピングにおけるデータ抽出部分を簡単にしますが、CAPTCHA や IP ブロックなどの一般的な課題は依然として存在します。
 
-To mimic browsing behavior, you can implement timed delays in your code. You can also utilize rotating proxies to avoid detection. Additionally, CAPTCHA-solving services like Bright Data’s CAPTCHA solver or Anti Captcha can be integrated into your scraper to automatically solve CAPTCHAs for you.
+ブラウジング行動を模倣するために、コード内に時間差の遅延を実装できます。また、ローテーティングプロキシを利用して検知を回避することも可能です。さらに、Bright Data の CAPTCHA solver や Anti Captcha のような CAPTCHA 解決サービスをスクレイパーに統合し、CAPTCHA を自動的に解くこともできます。
 
 > **Important**:
 > 
-> Always ensure that you’re compliant with a website’s terms of service. Scraping for personal use is often acceptable, but redistributing data can have legal implications.
+> 必ず Webサイトの利用規約に準拠していることを確認してください。個人利用目的のスクレイピングは許容されることが多い一方で、データの再配布は法的な影響を伴う可能性があります。
 
 ## Using Proxies with ScrapeGraphAI
 
-ScrapeGraphAI lets you set up a proxy service to avoid IP blocking and access georestricted pages. To do that, add the following to your `graph_config`:
+ScrapeGraphAI では、IP ブロックを回避し、ジオロケーション制限のあるページにアクセスするためにプロキシサービスを設定できます。そのためには、`graph_config` に次を追加します。
 
 ```python
 graph_config = {
@@ -188,9 +188,9 @@ graph_config = {
 }
 ```
 
-This configuration tells ScrapeGraphAI to use a free proxy service that matches your criteria.
+この設定は、条件に一致する無料のプロキシサービスを使用するように ScrapeGraphAI に指示します。
 
-To use a custom proxy server from a provider like Bright Data, alter your `graph_config` as follows, inserting your server URL, username, and password:
+Bright Data のようなプロバイダーのカスタムプロキシサーバーを使用するには、`graph_config` を次のように変更し、server URL、username、password を挿入します。
 
 ```python
 graph_config = {
@@ -208,13 +208,13 @@ graph_config = {
 }
 ```
 
-Using a custom proxy server offers several benefits, particularly for large-scale web scraping. It gives you control over the proxy location, enabling you to access georestricted content. Custom proxies are also more reliable and secure than free proxies, reducing the risk of IP blocks or rate-limiting.
+カスタムプロキシサーバーの利用には、特に大規模な Webスクレイピングにおいて複数の利点があります。プロキシの場所を制御できるため、ジオロケーション制限のあるコンテンツにアクセス可能になります。さらに、カスタムプロキシは無料プロキシよりも信頼性とセキュリティが高く、IP ブロックやレート制限のリスクを低減します。
 
 ## Cleaning and Preparing Data
 
-After scraping, it's important to clean and preprocess the data, especially if you're using it for AI models. Clean data ensures that your models learn from accurate, consistent information, improving their performance and reliability. Data cleaning typically includes handling missing values, correcting data types, normalizing text, and removing duplicates.
+スクレイピング後、特に AI モデルで使用する場合は、データのクリーニングと前処理が重要です。クリーンなデータにより、モデルは正確で一貫性のある情報から学習でき、性能と信頼性が向上します。データクリーニングには通常、欠損値の処理、データ型の修正、テキストの正規化、重複の削除などが含まれます。
 
-Here’s an example of how to clean your scraped data using [pandas](https://pypi.org/project/pandas/):
+以下は、[pandas](https://pypi.org/project/pandas/) を使用してスクレイピングしたデータをクリーニングする例です。
 
 ```python
 import pandas as pd
@@ -235,15 +235,15 @@ df.dropna(inplace=True)
 print(df.head())
 ```
 
-This code cleans the data by removing the currency symbol from the book prices, standardizes the availability status by converting it to lowercase, and handles any missing values.
+このコードは、書籍価格から通貨記号を削除し、在庫状況を小文字に変換して標準化し、欠損値があれば処理することでデータをクリーニングします。
 
-Install the `pandas` library for data manipulation before running that code:
+このコードを実行する前に、データ操作のための `pandas` ライブラリをインストールします。
 
 ```bash
 pip install pandas
 ```
 
-Open your terminal and run `python app.py`. The output should look like this:
+ターミナルを開いて `python app.py` を実行します。出力は次のようになります。
 
 ```
                                    title  price availability
@@ -254,14 +254,14 @@ Open your terminal and run `python app.py`. The output should look like this:
 4  Sapiens: A Brief History of Humankind  54.23     in stock
 ```
 
-This is just an example of cleaning scraped data; the process varies based on the data and LLM use case. Cleaning ensures your language models receive structured and meaningful input. Learn about the most popular [AI use cases](https://brightdata.com/ai).
+これはスクレイピングデータのクリーニング例にすぎず、プロセスはデータと LLM のユースケースに応じて異なります。クリーニングにより、言語モデルは構造化された意味のある入力を受け取れます。最も人気のある [AI use cases](https://brightdata.jp/ai) について学んでください。
 
-You can find all the code for this tutorial in [this GitHub repo](https://github.com/mikeyny/scrapegraphai-demo).
+このチュートリアルの全コードは [this GitHub repo](https://github.com/mikeyny/scrapegraphai-demo) で確認できます。
 
 ## Conclusion
 
-ScrapeGraphAI uses LLMs for adaptive web scraping, adjusting to website changes and extracting data intelligently. However, scaling scraping comes with challenges like IP blocks, CAPTCHAs, and legal compliance.
+ScrapeGraphAI は LLM を使用して適応型の Webスクレイピングを実現し、Webサイトの変更に合わせて調整しながら、データをインテリジェントに抽出します。ただし、スクレイピングをスケールさせると、IP ブロック、CAPTCHA、法的コンプライアンスなどの課題が伴います。
 
-Bright Data offers solutions to address these challenges, including [Web Scraper APIs](https://brightdata.com/products/web-scraper), [proxy services](https://brightdata.com/proxy-types), and [Serverless Scraping](https://brightdata.com/products/web-scraper/functions). They also provide [ready-to-use datasets](https://brightdata.com/products/datasets) from over a hundred popular websites.
+Bright Data は、これらの課題に対処するソリューションとして、[Web Scraper APIs](https://brightdata.jp/products/web-scraper)、[proxy services](https://brightdata.jp/proxy-types)、および [Serverless Scraping](https://brightdata.jp/products/web-scraper/functions) を提供しています。また、100 以上の人気 Webサイトからの [ready-to-use datasets](https://brightdata.jp/products/datasets) も提供しています。
 
-Start your free trial today!
+今すぐ無料トライアルを開始しましょう！
